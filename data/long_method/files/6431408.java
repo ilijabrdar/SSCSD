@@ -1,1 +1,0 @@
-    public UInteger getNodeClassMask() { return nodeClassMask; }

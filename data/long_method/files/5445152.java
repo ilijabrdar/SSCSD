@@ -1,3 +1,0 @@
-    int getPartitionIndex() {
-        return partitionIndex;
-    }

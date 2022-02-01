@@ -1,1 +1,0 @@
-		public Group getGroup_1_1() { return cGroup_1_1; }

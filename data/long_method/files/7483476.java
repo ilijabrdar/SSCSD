@@ -1,1 +1,0 @@
-	protected Customer1942() {}

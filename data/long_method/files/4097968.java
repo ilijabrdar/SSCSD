@@ -1,3 +1,0 @@
-        public String getIndexName() {
-            return indexName;
-        }

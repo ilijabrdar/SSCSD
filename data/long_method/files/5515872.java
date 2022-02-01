@@ -1,2 +1,0 @@
-    public RocketmqLog4jAppender() {
-    }

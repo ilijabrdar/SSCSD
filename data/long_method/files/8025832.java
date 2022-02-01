@@ -1,1 +1,0 @@
-		@Override public ParserRule getRule() { return rule; }
