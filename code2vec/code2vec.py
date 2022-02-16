@@ -38,5 +38,6 @@ if __name__ == '__main__':
                 str(eval_results).replace('topk', 'top{}'.format(config.TOP_K_WORDS_CONSIDERED_DURING_PREDICTION)))
     if config.PREDICT:
         predictor = Predictor(config, model)
-        predictor.predict(smell_type='blob')
+        # predictor.predict(smell_type='blob')
+        predictor.predict_unlabeled()
     model.close_session()

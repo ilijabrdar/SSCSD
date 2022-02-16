@@ -2,6 +2,7 @@ import pickle
 import numpy as np
 from extractor import Extractor
 import os
+import pandas as pd
 
 SHOW_TOP_CONTEXTS = 10
 MAX_PATH_LENGTH = 8
@@ -13,6 +14,9 @@ BLOB_OUTPUT_DIR = 'C:\\Users\\ilija\\OneDrive\\Desktop\\SIAP\\data\\god_class\\f
 
 LM_FILES = 'C:\\Users\\ilija\\OneDrive\\Desktop\\SIAP\\data\\long_method\\files\\'
 LM_OUTPUT_DIR = 'C:\\Users\\ilija\\OneDrive\\Desktop\\SIAP\\data\\long_method\\file_code\\'
+
+UNLABELED_DS = '..\\..\\data\\god_class\\multi_view\\unlabeled.xlsx'
+UNLABELED_OUTPUT_DIR = '..\\..\\data\\god_class\\unlabeled_file_code\\'
 
 
 class Predictor:
@@ -58,4 +62,27 @@ class Predictor:
             with open(f'{output}{name}.pkl', 'wb') as f:
                 pickle.dump(mean, f)
 
+        print(errors)
+
+    def predict_unlabeled(self):
+        errors = []
+        df = pd.read_excel(UNLABELED_DS)[['file', 'class']]
+        for _, row in df.iterrows():
+            sample, name = row['file'], row['class']
+            try:
+                predict_lines, hash_to_string_dict = self.path_extractor.extract_paths(sample)
+            except ValueError as e:
+                errors.append(sample)
+                print(e)
+                continue
+
+            raw_prediction_results = self.model.predict(predict_lines)
+            vectors = []
+            for raw_prediction in raw_prediction_results:
+                vectors.append(raw_prediction.code_vector)
+
+            vectors = np.array(vectors)
+            mean = vectors.mean(axis=0)
+            with open(f'{UNLABELED_OUTPUT_DIR}{name}.pkl', 'wb') as f:
+                pickle.dump(mean, f)
         print(errors)
