@@ -12,7 +12,7 @@ LM_OUTPUT_DIR = '..\\data\\long_method\\multi_view\\'
 
 UNLABELED_PROJ_ROOT = '..\\data\\unlabeled\\'
 CK_OUTPUT = '..\\data\\unlabeled_ck_metrics\\'
-CK_JAR_PATH = 'C:\\Users\\ilija\\OneDrive\\Desktop\\faks\\diplomski\\ck\\target\\ck-0.7.1-SNAPSHOT-jar-with-dependencies.jar'
+CK_JAR_PATH = '..\\ck-0.7.1-SNAPSHOT-jar-with-dependencies.jar'
 
 pd.options.mode.chained_assignment = None
 
@@ -70,7 +70,7 @@ def process_metrics(smell_type='blob'):
     df_train = df[df['parts'] == 'train']
     df_test = df[df['parts'] == 'test']
 
-    df_train, df_valid = train_test_split(df_train, test_size=.25, random_state=42, stratify=df_train['label'])
+    df_train, df_valid = train_test_split(df_train, test_size=.25, random_state=0, stratify=df_train['label']) #42
 
     drop_cols(df_train, smell_type).to_excel(f'{output_dir}train.xlsx', index=False)
     drop_cols(df_test, smell_type).to_excel(f'{output_dir}test.xlsx', index=False)
