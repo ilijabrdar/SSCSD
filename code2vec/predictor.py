@@ -3,6 +3,9 @@ import numpy as np
 from extractor import Extractor
 import os
 import pandas as pd
+from os import listdir
+from os.path import isfile, join
+import json
 
 SHOW_TOP_CONTEXTS = 10
 MAX_PATH_LENGTH = 8
@@ -18,6 +21,8 @@ LM_OUTPUT_DIR = 'C:\\Users\\ilija\\OneDrive\\Desktop\\SIAP\\data\\long_method\\f
 UNLABELED_DS = '..\\..\\data\\god_class\\multi_view\\unlabeled.xlsx'
 UNLABELED_OUTPUT_DIR = '..\\..\\data\\god_class\\unlabeled_file_code\\'
 
+UNLABELED_JSON_LM = 'data\\methods\\'
+UNLABELED_OUTPUT_DIR_LM = 'data\\long-method\\c2v_unlabeled\\'
 
 class Predictor:
     exit_keywords = ['exit', 'quit', 'q']
@@ -86,3 +91,29 @@ class Predictor:
             with open(f'{UNLABELED_OUTPUT_DIR}{name}.pkl', 'wb') as f:
                 pickle.dump(mean, f)
         print(errors)
+    
+    def predict_unlabeled_lm(self):
+        errors = []
+        for f1 in listdir(UNLABELED_JSON_LM):
+            file_path = join(UNLABELED_JSON_LM, f1)
+            if isfile(file_path):
+                print(f1)
+            with open(file_path, 'r') as lm_json:
+                data = lm_json.read()
+
+                details = json.loads(data)
+                raw_prediction_results = self.model.predict(details['code'])
+                
+                vectors = []
+                for raw_prediction in raw_prediction_results:
+                    vectors.append(raw_prediction.code_vector)
+
+                vectors = np.array(vectors)
+                mean = vectors.mean(axis=0)
+                details['code'] = mean
+                
+                with open(f'{UNLABELED_OUTPUT_DIR_LM}{f}.pkl', 'wb') as f:
+                    pickle.dump(details, f)
+                print(errors) 
+                
+    

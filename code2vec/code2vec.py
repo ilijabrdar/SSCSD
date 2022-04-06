@@ -39,5 +39,6 @@ if __name__ == '__main__':
     if config.PREDICT:
         predictor = Predictor(config, model)
         # predictor.predict(smell_type='blob')
-        predictor.predict_unlabeled()
+        # predictor.predict_unlabeled()
+        predictor.predict_unlabeled_lm()
     model.close_session()
