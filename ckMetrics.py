@@ -14,6 +14,8 @@ UNLABELED_PROJ_ROOT = '..\\data\\unlabeled\\'
 CK_OUTPUT = '..\\data\\unlabeled_ck_metrics\\'
 CK_JAR_PATH = '..\\ck-0.7.1-SNAPSHOT-jar-with-dependencies.jar'
 
+TRAIN_SET = 'data\\long_method\\multi_view\\train.xlsx'
+VALIDATION_SET = 'data\\long_method\\multi_view\\'
 pd.options.mode.chained_assignment = None
 
 
@@ -77,6 +79,22 @@ def process_metrics(smell_type='blob'):
     drop_cols(df_valid, smell_type).to_excel(f'{output_dir}validation.xlsx', index=False)
 
 
+def split_validation(smell_type='blob'):
+    if smell_type == 'blob':
+        input_dir = BLOB_METRICS
+        output_dir = BLOB_OUTPUT_DIR
+    elif smell_type == 'long_method':
+        input_dir = TRAIN_SET
+        output_dir = VALIDATION_SET
+    else:
+        raise ValueError()
+    
+    df = pd.read_excel(input_dir)
+    df_train, df_valid = train_test_split(df, test_size=.25, random_state=0, stratify=df['label']) #42
+    df_valid.to_excel(f'{output_dir}validation.xlsx', index=False)
+    df_train.to_excel(f'{output_dir}train.xlsx', index=False)
+
+    
 def generate_ck_metrics():
     for dir_name in os.listdir(UNLABELED_PROJ_ROOT):
         os.mkdir(CK_OUTPUT + dir_name)
@@ -113,5 +131,6 @@ def process_unlabeled_metrics(smell_type='blob'):
 if __name__ == '__main__':
     # generate_ck_metrics()
     # process_unlabeled_metrics(smell_type='blob')
-    process_metrics(smell_type='blob')
+    # process_metrics(smell_type='blob')
+    split_validation(smell_type = 'long_method')
 

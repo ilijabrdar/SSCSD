@@ -82,8 +82,6 @@ def pair_ck_with_code2vec_lm(df: pd.DataFrame, cols, labeled = True):
         try:
             for f1 in listdir(UNLABELED_JSON_LM):
                     file_path = join(UNLABELED_JSON_LM, f1)
-                    if isfile(file_path):
-                        print(f1)
                     with open(file_path, 'r') as lm_json:
                         data = lm_json.read()
 
@@ -111,10 +109,8 @@ def pair_ck_with_code2vec_lm(df: pd.DataFrame, cols, labeled = True):
                                 features.append([row[cols].to_list(), details['code'].tolist()])
                                 break
                                 
-                            
-                            print(details['paramTypes'])
                             param_types = parameter_details_list[1].split(']')[0].split(',')
-                            
+                      
                             has_all_attrs = True
                             for param_type in param_types:
                                 type_p = param_type.split('.')
@@ -123,17 +119,11 @@ def pair_ck_with_code2vec_lm(df: pd.DataFrame, cols, labeled = True):
                                 else:
                                     type_p = type_p[0]
                                 
-                                print(details['paramTypes'])
-                                
                                 if type_p not in details['paramTypes']:
                                     has_all_attrs = False
-                                    break
-                                
-                            
+                                    break    
                             if has_all_attrs:
-                                features.append([row[cols].to_list(), details['code'].tolist()])
-                        
-                
+                                features.append([row[cols].to_list(), details['code'].tolist()])            
         except FileNotFoundError:
             pass
         
@@ -242,4 +232,7 @@ if __name__ == '__main__':
     # code2vec_ck_method_exp(smell_type='blob', model='svm', k=100, ratio=2, u=70, p=2, n=5)
     # code2vec_ck_method_exp('blob', 'bagging', ratio=.2, testing=True)
     
-    code2vec_ck_method_experiment_lm(model='svm', k=100, ratio=2, u=70, p=2, n=5)
+    # code2vec_ck_method_experiment_lm(model='svm', k=100, ratio=2, u=70, p=2, n=5)
+    ck_method_exp(smell_type='long_method', model='svm', k=70, ratio=2, u=70, p=2, n=5, testing=True)
+    # ck_method_exp(smell_type='long_method', model='svm', k=80, ratio=2, u=70, p=2, n=5, testing=False)
+    

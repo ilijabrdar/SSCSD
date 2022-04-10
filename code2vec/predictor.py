@@ -112,7 +112,7 @@ class Predictor:
                 mean = vectors.mean(axis=0)
                 details['code'] = mean
                 
-                with open(f'{UNLABELED_OUTPUT_DIR_LM}{f}.pkl', 'wb') as f:
+                with open(f'{UNLABELED_OUTPUT_DIR_LM}{f1}.pkl', 'wb') as f:
                     pickle.dump(details, f)
                 print(errors) 
                 
