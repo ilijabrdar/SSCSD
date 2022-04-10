@@ -12,20 +12,21 @@ colors = ['r', 'g', 'b', 'k']
 def co_train(labeled_data, unlabeled_data, test_data, model='svm', view_count=2, k=30, ratio=2, u=75, p=1, n=3):
     if model == 'svm':
         # models = [SVC(C=0.2, kernel='linear', gamma='auto', probability=True, random_state=0) for i in range(view_count)] #ck
-        models = [SVC(C=.2, probability=True, random_state=0), SVC(C=100, probability=True, random_state=0)] #code2vec
+        # models = [SVC(C=.2, probability=True, random_state=0), SVC(C=100, probability=True, random_state=0)] #code2vec
+        models = [SVC(C=.2, probability=True, random_state=0), SVC(C=.8, probability=True, random_state=0)]
     elif model == 'random_forest':
-        models = [RandomForestClassifier(n_estimators=400, max_depth=10, min_samples_leaf=5, random_state=0) for i in range(view_count)]
-        # models = [RandomForestClassifier(min_samples_leaf=5, random_state=0),
-        #           RandomForestClassifier(min_samples_leaf=5, random_state=0)]
+        # models = [RandomForestClassifier(n_estimators=400, max_depth=10, min_samples_leaf=5, random_state=0) for i in range(view_count)]
+        models = [RandomForestClassifier(min_samples_leaf=5, random_state=0),
+                  RandomForestClassifier(min_samples_leaf=5, random_state=0)]
     elif model == 'xgboost':
         # models = [GradientBoostingClassifier(learning_rate=.3, max_features='log2', n_estimators=50, random_state=0) for i in range(view_count)]
         models = [GradientBoostingClassifier(learning_rate=.3, max_features='log2', n_estimators=50, random_state=0),
                   GradientBoostingClassifier(learning_rate=.3, max_features='log2', n_estimators=50, random_state=0)]
     elif model == 'bagging':
         estimator = SVC(C=.2)
-        models = [BaggingClassifier(base_estimator=estimator, bootstrap=False, random_state=0) for i in range(view_count)]
-        # models = [BaggingClassifier(base_estimator=SVC(C=.2), bootstrap=False, random_state=0),
-        #           BaggingClassifier(base_estimator=SVC(C=.8), bootstrap=False, random_state=0)]
+        # models = [BaggingClassifier(base_estimator=estimator, bootstrap=False, random_state=0) for i in range(view_count)]
+        models = [BaggingClassifier(base_estimator=SVC(C=.2), bootstrap=False, random_state=0),
+                  BaggingClassifier(base_estimator=SVC(C=.8), bootstrap=False, random_state=0)]
     else:
         raise ValueError()
 

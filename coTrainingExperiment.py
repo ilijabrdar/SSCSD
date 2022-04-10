@@ -1,5 +1,6 @@
 import pickle
 
+import numpy as np
 import pandas as pd
 # from coTraining import co_train, get_score
 from cotraining_blum_mitchell import co_train, get_score
@@ -27,10 +28,10 @@ def pair_ck_with_code2vec(df: pd.DataFrame, cols, labeled=True):
             try:
                 with open(f'{C2V}{name}.pkl', 'rb') as f:
                     vec = pickle.load(f)
-                    if len(vec.shape) > 1:
-                        vec = vec[0]
+                    # if len(vec.shape) > 1:
+                    #     vec = vec[0]
                     # if vec.size != 384: #code2vec
-                    if vec.size != 320: #code2seq
+                    if not isinstance(vec, np.ndarray) or len(vec) != 320 or np.any(np.isnan(vec)):
                         continue
                     features.append([row[cols].to_list(), vec.tolist()])
                     labels.append(row['label'])
@@ -42,10 +43,10 @@ def pair_ck_with_code2vec(df: pd.DataFrame, cols, labeled=True):
             try:
                 with open(f'{UNLABELED_C2V}{name}.pkl', 'rb') as f:
                     vec = pickle.load(f)
-                    if len(vec.shape) > 1:
-                        vec = vec[0]
+                    # if len(vec.shape) > 1:
+                    #     vec = vec[0]
                     # if vec.size != 384: #code2vec
-                    if vec.size != 320:  # code2seq
+                    if not isinstance(vec, np.ndarray) or len(vec) != 320 or np.any(np.isnan(vec)):
                         continue
                     features.append([row[cols].to_list(), vec.tolist()])
             except FileNotFoundError:
@@ -130,5 +131,5 @@ if __name__ == '__main__':
     # ck_method_exp(smell_type='blob', model='xgboost', k=80, ratio=2, u=70, p=2, n=5, testing=True)
     # ck_method_exp(smell_type='blob', model='xgboost', k=100, ratio=2, u=70, p=2, n=5)
 
-    code2vec_ck_method_exp(smell_type='blob', model='svm', k=60, ratio=2, u=70, p=2, n=5)
-    # code2vec_ck_method_exp('blob', 'bagging', ratio=.2, testing=True)
+    # code2vec_ck_method_exp(smell_type='blob', model='bagging', k=60, ratio=2, u=70, p=2, n=5)
+    code2vec_ck_method_exp('blob', 'bagging', k=35, ratio=2, u=70, p=2, n=5, testing=True)
