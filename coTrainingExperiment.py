@@ -20,7 +20,7 @@ UNLABELED_C2V = 'data\\god_class\\unlabeled_file_code\\'
 C2V_LM = 'data\\long_method\\file_code\\'
 C2V_UNLABELED = 'data\\c2v_unlabeled\\'
 
-UNLABELED_JSON_LM = 'data\\methods\\'
+UNLABELED_JSON_LM = 'data\\long_method\\c2v_unlabeled\\'
 UNLABELED_OUTPUT_DIR_LM = 'data\\long-method\\c2v_unlabeled\\'
 # code2seq paths
 # C2V = '..\\data\\god_class\\c2s\\'
@@ -82,15 +82,11 @@ def pair_ck_with_code2vec_lm(df: pd.DataFrame, cols, labeled = True):
         try:
             for f1 in listdir(UNLABELED_JSON_LM):
                     file_path = join(UNLABELED_JSON_LM, f1)
-                    if isfile(file_path):
-                        print(f1)
-                    with open(file_path, 'r') as lm_json:
-                        data = lm_json.read()
-
-                        details = json.loads(data)
+                    with open(file_path, 'rb') as f:
+                        details = pickle.load(f)
                         
                         df_rows = df.loc[df['file'] == details['filePath']]
-                        
+                        found = False
                         for _, row in df_rows.iterrows():
                             method_details = row['method']
                             method_details_list = method_details.split('/')
@@ -104,17 +100,21 @@ def pair_ck_with_code2vec_lm(df: pd.DataFrame, cols, labeled = True):
                             except Exception as e:
                                 print(e)
                             
-                            if param_num != details['paramNumber'] and method_name != details['name']: 
+                            if int(param_num) != details['paramNumber'] or method_name != details['name']: 
                                 continue
-                            
-                            if len(parameter_details_list) == 0:
+                            elif parameter_details_list[0] == '0' and details['paramNumber'] == 0 and details['name'] == method_name:
                                 features.append([row[cols].to_list(), details['code'].tolist()])
+                                found = True
                                 break
                                 
+                            if len(parameter_details_list) == 0:
+                                features.append([row[cols].to_list(), details['code'].tolist()])
+                                found = True
+                                break
                             
-                            print(details['paramTypes'])
                             param_types = parameter_details_list[1].split(']')[0].split(',')
-                            
+
+                                
                             has_all_attrs = True
                             for param_type in param_types:
                                 type_p = param_type.split('.')
@@ -123,17 +123,16 @@ def pair_ck_with_code2vec_lm(df: pd.DataFrame, cols, labeled = True):
                                 else:
                                     type_p = type_p[0]
                                 
-                                print(details['paramTypes'])
-                                
                                 if type_p not in details['paramTypes']:
                                     has_all_attrs = False
-                                    break
-                                
-                            
+                                    break    
                             if has_all_attrs:
-                                features.append([row[cols].to_list(), details['code'].tolist()])
-                        
-                
+                                features.append([row[cols].to_list(), details['code'].tolist()])   
+                                found = True    
+                                
+                        if found:
+                            continue
+                             
         except FileNotFoundError:
             pass
         
@@ -216,19 +215,23 @@ def code2vec_ck_method_experiment_lm(model, k=30, ratio=2, u=75, p=1, n=3, testi
     input_dir = LM_CK_METRICS
     unlabeled_df = pd.read_excel(f'{input_dir}unlabeled.xlsx')
     
-    cols = ['line',	'cbo',	'cboModified',	'fanin', 'fanout',	'wmc',	'rfc',	'loc',	'returnsQty',	'variablesQty',	'parametersQty',	'methodsInvokedQty',
-            'methodsInvokedLocalQty',	'methodsInvokedIndirectLocalQty',	'loopQty',	'comparisonsQty',	'tryCatchQty',	'parenthesizedExpsQty',	'stringLiteralsQty',	'numbersQty',	'assignmentsQty',
-            'mathOperationsQty',	'maxNestedBlocksQty',	'anonymousClassesQty',	'innerClassesQty',	'lambdasQty',	'uniqueWordsQty',	'modifiers',	'logStatementsQty']
+    # cols = ['line',	'cbo',	'cboModified',	'fanin', 'fanout',	'wmc',	'rfc',	'loc',	'returnsQty',	'variablesQty',	'parametersQty',	'methodsInvokedQty',
+    #         'methodsInvokedLocalQty',	'methodsInvokedIndirectLocalQty',	'loopQty',	'comparisonsQty',	'tryCatchQty',	'parenthesizedExpsQty',	'stringLiteralsQty',	'numbersQty',	'assignmentsQty',
+    #         'mathOperationsQty',	'maxNestedBlocksQty',	'anonymousClassesQty',	'innerClassesQty',	'lambdasQty',	'uniqueWordsQty',	'modifiers',	'logStatementsQty']
 
+    cols = ['cbo',	'wmc',	'rfc',	'loc',	'returnsQty',	'variablesQty',	'parametersQty',
+            'methodsInvokedQty',	'methodsInvokedLocalQty',	'methodsInvokedIndirectLocalQty',	'loopQty',	'comparisonsQty',	
+            'tryCatchQty',	'parenthesizedExpsQty',	'stringLiteralsQty',	'numbersQty',	'assignmentsQty',	'mathOperationsQty',	
+            'maxNestedBlocksQty',	'anonymousClassesQty',	'lambdasQty',	'uniqueWordsQty',	'modifiers',	'logStatementsQty']
     train_df = pd.read_excel(f'{input_dir}train.xlsx')
     test_df = pd.read_excel(f'{input_dir}test.xlsx')
     val_df = pd.read_excel(f'{input_dir}validation.xlsx')
     unlabeled_df = pd.read_excel(f'{input_dir}unlabeled.xlsx')
     
-    train = pair_ck_with_code2vec_lm(train_df, cols)[0]
-    test = pair_ck_with_code2vec_lm(test_df, cols)[0]
-    val = pair_ck_with_code2vec_lm(val_df, cols)[0]
-    unlabeled = pair_ck_with_code2vec_lm(unlabeled_df, cols)[0]
+    train = pair_ck_with_code2vec_lm(train_df, cols)
+    test = pair_ck_with_code2vec_lm(test_df, cols)
+    val = pair_ck_with_code2vec_lm(val_df, cols)
+    unlabeled = pair_ck_with_code2vec_lm(unlabeled_df, cols, False)[0]
     
     models = co_train(train, unlabeled, val, model, k=k, ratio=ratio, u=u, p=p, n=n)
 
@@ -243,3 +246,6 @@ if __name__ == '__main__':
     # code2vec_ck_method_exp('blob', 'bagging', ratio=.2, testing=True)
     
     code2vec_ck_method_experiment_lm(model='svm', k=100, ratio=2, u=70, p=2, n=5)
+    # ck_method_exp(smell_type='long_method', model='svm', k=70, ratio=2, u=70, p=2, n=5, testing=True)
+    # ck_method_exp(smell_type='long_method', model='svm', k=80, ratio=2, u=70, p=2, n=5, testing=False)
+    
