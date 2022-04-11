@@ -21,8 +21,11 @@ LM_OUTPUT_DIR = 'C:\\Users\\ilija\\OneDrive\\Desktop\\SIAP\\data\\long_method\\f
 UNLABELED_DS = '..\\..\\data\\god_class\\multi_view\\unlabeled.xlsx'
 UNLABELED_OUTPUT_DIR = '..\\..\\data\\god_class\\unlabeled_file_code\\'
 
-UNLABELED_JSON_LM = 'data\\methods\\'
-UNLABELED_OUTPUT_DIR_LM = 'data\\long-method\\c2v_unlabeled\\'
+UNLABELED_JSON_LM = '..\\..\\data\\long_method\\methods\\'
+UNLABELED_OUTPUT_DIR_LM = '..\\..\\data\\long_method\\c2v_unlabeled\\'
+
+TEMP_PATH = '.\\temp.java'
+
 
 class Predictor:
     exit_keywords = ['exit', 'quit', 'q']
@@ -102,7 +105,17 @@ class Predictor:
                 data = lm_json.read()
 
                 details = json.loads(data)
-                raw_prediction_results = self.model.predict(details['code'])
+                with open(TEMP_PATH, 'w') as f:
+                    f.write(details['code'])
+
+                try:
+                    predict_lines, hash_to_string_dict = self.path_extractor.extract_paths(TEMP_PATH)
+                except ValueError as e:
+                    errors.append(file_path)
+                    print(e)
+                    continue
+
+                raw_prediction_results = self.model.predict(predict_lines)
                 
                 vectors = []
                 for raw_prediction in raw_prediction_results:
@@ -112,7 +125,7 @@ class Predictor:
                 mean = vectors.mean(axis=0)
                 details['code'] = mean
                 
-                with open(f'{UNLABELED_OUTPUT_DIR_LM}{f}.pkl', 'wb') as f:
+                with open(f'{UNLABELED_OUTPUT_DIR_LM}{f1}.pkl', 'wb') as f:
                     pickle.dump(details, f)
                 print(errors) 
                 
