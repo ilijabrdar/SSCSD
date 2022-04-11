@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+from imblearn.over_sampling import SMOTE
+
 from selfTraining import self_train, predict
 
 
@@ -36,10 +38,15 @@ def train(model='svm', smell_type='blob'):
     test_x, test_y = extract_features_and_labels(test_df, cols)
     unlabeled_x, unlabeled_y = unlabeled_df[cols], pd.Series(data=np.array([-1] * unlabeled_df.shape[0]))
 
+    sm = SMOTE(sampling_strategy=0.4, random_state=42)
+    train_x, train_y = sm.fit_resample(train_x, train_y)
+
     train_x, train_y = pd.concat([train_x, unlabeled_x]), pd.concat([train_y, unlabeled_y])
+    # self_train(train_x, train_y, model)
     clf = self_train(train_x, train_y, model)
     predict(val_x, val_y, clf)
+    predict(test_x, test_y, clf)
 
 
 if __name__ == '__main__':
-    train(model='svm', smell_type='blob')
+    train(model='bagging', smell_type='blob')
