@@ -10,18 +10,18 @@ from os import listdir
 from os.path import isfile, join
 import json
 
-BLOB_CK_METRICS = 'data\\god_class\\multi_view\\'
-LM_CK_METRICS = 'data\\long_method\\multi_view\\'
+BLOB_CK_METRICS = '.\\..\\data\\god_class\\multi_view\\'
+LM_CK_METRICS = '.\\..\\data\\long_method\\multi_view\\'
 
 # code2vec paths
-C2V = 'data\\god_class\\file_code\\'
-UNLABELED_C2V = 'data\\god_class\\unlabeled_file_code\\'
+C2V = '.\\..\\data\\god_class\\file_code\\'
+UNLABELED_C2V = '.\\..\\data\\god_class\\unlabeled_file_code\\'
 
-C2V_LM = 'data\\long_method\\file_code\\'
-C2V_UNLABELED = 'data\\c2v_unlabeled\\'
+C2V_LM = '.\\..\\data\\long_method\\file_code\\'
+C2V_UNLABELED = '.\\..\\data\\c2v_unlabeled\\'
 
-UNLABELED_JSON_LM = 'data\\long_method\\c2v_unlabeled\\'
-UNLABELED_OUTPUT_DIR_LM = 'data\\long-method\\c2v_unlabeled\\'
+UNLABELED_JSON_LM = '.\\..\\data\\long_method\\c2v_unlabeled\\'
+UNLABELED_OUTPUT_DIR_LM = '.\\..\\data\\long-method\\c2v_unlabeled\\'
 # code2seq paths
 # C2V = '..\\data\\god_class\\c2s\\'
 # UNLABELED_C2V = '..\\data\\god_class\\c2s_unlabeled\\'
@@ -246,6 +246,6 @@ if __name__ == '__main__':
     # code2vec_ck_method_exp('blob', 'bagging', ratio=.2, testing=True)
     
     code2vec_ck_method_experiment_lm(model='svm', k=100, ratio=2, u=70, p=2, n=5)
-    # ck_method_exp(smell_type='long_method', model='svm', k=70, ratio=2, u=70, p=2, n=5, testing=True)
+    # ck_method_exp(smell_type='long_method', model='svm', k=50, ratio=2, u=70, p=2, n=5, testing=True)
     # ck_method_exp(smell_type='long_method', model='svm', k=80, ratio=2, u=70, p=2, n=5, testing=False)
     

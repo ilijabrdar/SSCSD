@@ -14,8 +14,8 @@ UNLABELED_PROJ_ROOT = '..\\data\\unlabeled\\'
 CK_OUTPUT = '..\\data\\unlabeled_ck_metrics\\'
 CK_JAR_PATH = '..\\ck-0.7.1-SNAPSHOT-jar-with-dependencies.jar'
 
-TRAIN_SET = 'data\\long_method\\multi_view\\train.xlsx'
-VALIDATION_SET = 'data\\long_method\\multi_view\\'
+TRAIN_SET = '..\\data\\long_method\\multi_view\\train.xlsx'
+VALIDATION_SET = '..\\data\\long_method\\multi_view\\'
 pd.options.mode.chained_assignment = None
 
 
