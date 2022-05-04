@@ -22,7 +22,6 @@ def self_train(x, y, model='svm'):
     else:
         raise ValueError('no such model')
 
-
     clf = SelfTrainingClassifier(base_estimator=base_clf, criterion='k_best', k_best=5, max_iter=30, verbose=True)
     # search = RandomizedSearchCV(estimator=clf, param_distributions=params, n_iter=30, scoring='f1', random_state=42)
     # search.fit(x.to_numpy(), y.to_numpy())
