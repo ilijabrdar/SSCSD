@@ -23,6 +23,9 @@ UNLABELED_OUTPUT_DIR = '..\\..\\data\\god_class\\unlabeled_file_code\\'
 
 UNLABELED_JSON_LM = 'data\\methods\\'
 UNLABELED_OUTPUT_DIR_LM = 'data\\long-method\\c2v_unlabeled\\'
+LM_UNLABELED_DS = '..\\data\\long_method\\multi_view'
+LM_UNLABELED_OUTPUT_DIR = '..\\data\\long_method\\unlabeled_file_code'
+
 
 class Predictor:
     exit_keywords = ['exit', 'quit', 'q']
@@ -69,7 +72,7 @@ class Predictor:
 
         print(errors)
 
-    def predict_unlabeled(self):
+    def predict_unlabeled_gc(self):
         errors = []
         df = pd.read_excel(UNLABELED_DS)[['file', 'class']]
         for _, row in df.iterrows():
@@ -91,29 +94,26 @@ class Predictor:
             with open(f'{UNLABELED_OUTPUT_DIR}{name}.pkl', 'wb') as f:
                 pickle.dump(mean, f)
         print(errors)
-    
+
     def predict_unlabeled_lm(self):
         errors = []
-        for f1 in listdir(UNLABELED_JSON_LM):
-            file_path = join(UNLABELED_JSON_LM, f1)
-            if isfile(file_path):
-                print(f1)
-            with open(file_path, 'r') as lm_json:
-                data = lm_json.read()
+        df = pd.read_excel(LM_UNLABELED_DS)[['file', 'class']]
+        for _, row in df.iterrows():
+            sample, name = row['file'], row['class']
+            try:
+                predict_lines, hash_to_string_dict = self.path_extractor.extract_paths(sample)
+            except ValueError as e:
+                errors.append(sample)
+                print(e)
+                continue
 
-                details = json.loads(data)
-                raw_prediction_results = self.model.predict(details['code'])
-                
-                vectors = []
-                for raw_prediction in raw_prediction_results:
-                    vectors.append(raw_prediction.code_vector)
+            raw_prediction_results = self.model.predict(predict_lines)
+            vectors = []
+            for raw_prediction in raw_prediction_results:
+                vectors.append(raw_prediction.code_vector)
 
-                vectors = np.array(vectors)
-                mean = vectors.mean(axis=0)
-                details['code'] = mean
-                
-                with open(f'{UNLABELED_OUTPUT_DIR_LM}{f1}.pkl', 'wb') as f:
-                    pickle.dump(details, f)
-                print(errors) 
-                
-    
+            vectors = np.array(vectors)
+            mean = vectors.mean(axis=0)
+            with open(f'{UNLABELED_OUTPUT_DIR}{name}.pkl', 'wb') as f:
+                pickle.dump(mean, f)
+        print(errors)

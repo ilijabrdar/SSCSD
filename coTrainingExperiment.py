@@ -15,8 +15,8 @@ BLOB_CK_METRICS = 'data\\god_class\\multi_view\\'
 LM_CK_METRICS = 'data\\long_method\\multi_view\\'
 
 # code2vec paths
-C2V = 'data\\god_class\\file_code\\'
-UNLABELED_C2V = 'data\\god_class\\unlabeled_file_code\\'
+# C2V = '..\\data\\god_class\\file_code\\'
+# UNLABELED_C2V = '..\\data\\god_class\\unlabeled_file_code\\'
 
 C2V_LM = 'data\\long_method\\file_code\\'
 C2V_UNLABELED = 'data\\c2v_unlabeled\\'
@@ -24,8 +24,8 @@ C2V_UNLABELED = 'data\\c2v_unlabeled\\'
 UNLABELED_JSON_LM = 'data\\long_method\\c2v_unlabeled\\'
 UNLABELED_OUTPUT_DIR_LM = 'data\\long-method\\c2v_unlabeled\\'
 # code2seq paths
-# C2V = '..\\data\\god_class\\c2s\\'
-# UNLABELED_C2V = '..\\data\\god_class\\c2s_unlabeled\\'
+C2V = '..\\data\\god_class\\c2s\\'
+UNLABELED_C2V = '..\\data\\god_class\\c2s_unlabeled\\'
 
 
 def pair_ck_with_code2vec(df: pd.DataFrame, cols, labeled=True):
@@ -39,7 +39,8 @@ def pair_ck_with_code2vec(df: pd.DataFrame, cols, labeled=True):
                     vec = pickle.load(f)
                     if len(vec.shape) > 1:
                         vec = vec[0]
-                    if vec.size != 384:
+                    # if vec.size != 384: #code2vec
+                    if vec.size != 320: #code2seq
                         continue
                     features.append([row[cols].to_list(), vec.tolist()])
                     labels.append(row['label'])
@@ -53,7 +54,8 @@ def pair_ck_with_code2vec(df: pd.DataFrame, cols, labeled=True):
                     vec = pickle.load(f)
                     if len(vec.shape) > 1:
                         vec = vec[0]
-                    if vec.size != 384:
+                    # if vec.size != 384: #code2vec
+                    if vec.size != 320:  # code2seq
                         continue
                     features.append([row[cols].to_list(), vec.tolist()])
             except FileNotFoundError:
@@ -250,3 +252,5 @@ if __name__ == '__main__':
     # ck_method_exp(smell_type='long_method', model='svm', k=70, ratio=2, u=70, p=2, n=5, testing=True)
     # ck_method_exp(smell_type='long_method', model='svm', k=80, ratio=2, u=70, p=2, n=5, testing=False)
     
+    code2vec_ck_method_exp(smell_type='blob', model='svm', k=60, ratio=2, u=70, p=2, n=5)
+    # code2vec_ck_method_exp('blob', 'bagging', ratio=.2, testing=True)
