@@ -1,3 +1,4 @@
+from cgi import test
 import pickle
 from re import L
 
@@ -245,7 +246,7 @@ if __name__ == '__main__':
     # code2vec_ck_method_exp(smell_type='blob', model='svm', k=100, ratio=2, u=70, p=2, n=5)
     # code2vec_ck_method_exp('blob', 'bagging', ratio=.2, testing=True)
     
-    code2vec_ck_method_experiment_lm(model='svm', k=100, ratio=2, u=70, p=2, n=5)
+    code2vec_ck_method_experiment_lm(model='svm', k=100, ratio=2, u=70, p=2, n=5, testing=True)
     # ck_method_exp(smell_type='long_method', model='svm', k=70, ratio=2, u=70, p=2, n=5, testing=True)
     # ck_method_exp(smell_type='long_method', model='svm', k=80, ratio=2, u=70, p=2, n=5, testing=False)
     
