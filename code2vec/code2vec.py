@@ -39,6 +39,10 @@ if __name__ == '__main__':
     if config.PREDICT:
         predictor = Predictor(config, model)
         # predictor.predict(smell_type='blob')
+<<<<<<< HEAD
         # predictor.predict_unlabeled()
         predictor.predict_unlabeled_lm()
+=======
+        predictor.predict_unlabeled_gc()
+>>>>>>> co-learning
     model.close_session()
